@@ -20,7 +20,6 @@ function Login() {
 
     // Dummy login check (replace with real logic later)
     if (email && password) {
-      // Redirect to /shop
       navigate('/shop');
     } else {
       alert('Please fill in both fields.');
@@ -30,11 +29,13 @@ function Login() {
   return (
     <Grid
       container
+      direction={{ xs: 'column', md: 'row' }}  
       sx={{
         backgroundColor: '#FFFCFA',
         height: '100vh',
         width: '100vw',
         fontFamily: 'Source Serif Pro, serif',
+        overflow: 'hidden', // Optional: Prevent overflow issues
       }}
     >
       {/* Left Section */}
@@ -79,8 +80,8 @@ function Login() {
         {/* Decorative shapes */}
         <Box
           sx={{
-            marginLeft:'413px',
-            marginTop:'432px',
+            marginLeft: '413px',
+            marginTop: '432px',
             position: 'absolute',
             top: 0,
             left: 0,
@@ -94,8 +95,8 @@ function Login() {
         />
         <Box
           sx={{
-            marginRight:'333px',
-            marginBottom:'433px',
+            marginRight: '333px',
+            marginBottom: '433px',
             position: 'absolute',
             bottom: 0,
             right: 0,
