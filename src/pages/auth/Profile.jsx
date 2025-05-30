@@ -68,6 +68,11 @@ const Profile = () => {
     }
   };
 
+  // Fallback image in case of loading failure
+  const handleImageError = (e) => {
+    e.target.src = 'https://via.placeholder.com/100?text=Image+Not+Found';
+  };
+
   return (
     <>
       <style>{`
@@ -106,7 +111,7 @@ const Profile = () => {
           <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: '2px solid #e0e0e0', backgroundColor: 'white' }}>
             <Toolbar sx={{ py: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mr: 4 }}>
-                <img src={logoImg} alt="Lokal Logo" style={{ height: 70 }} />
+                <img src={logoImg} alt="Lokal Logo" style={{ height: 70 }} onError={handleImageError} />
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, gap: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
@@ -142,7 +147,7 @@ const Profile = () => {
                 <IconButton sx={{ color: '#334B1C', padding: '8px' }}>
                   <Favorite sx={{ fontSize: '37px' }} />
                 </IconButton>
-                <IconButton sx={{ color: '#334B1C', padding: '8px' }}>
+                <IconButton sx={{ color: '#334B1C', padding: '8px' }} onClick={() => navigate('/cart')}>
                   <ShoppingBagOutlined sx={{ fontSize: '37px' }} />
                 </IconButton>
                 <IconButton sx={{ color: '#334B1C', padding: '8px' }} onClick={() => navigate('/profile')}>
@@ -206,7 +211,7 @@ const Profile = () => {
                 expandIcon={expandedCategory === category.name ? <ExpandLess sx={{ color: '#FD862C' }} /> : <ExpandMore sx={{ color: '#FD862C' }} />}
                 sx={{ display: 'flex', alignItems: 'center', px: 2 }}
               >
-                <img src={category.image} alt="icon" style={{ width: 40, height: 40, marginRight: 10 }} />
+                <img src={category.image} alt="icon" style={{ width: 40, height: 40, marginRight: 10 }} onError={handleImageError} />
                 <Typography sx={{ fontWeight: 600, fontSize: '1rem' }}>{category.name}</Typography>
               </AccordionSummary>
               <AccordionDetails>
@@ -229,7 +234,7 @@ const Profile = () => {
           <Divider sx={{ my: 2 }} />
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1, backgroundColor: '#fff', borderRadius: 4, border: '1px solid #50554A' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <img src={saleImg} alt="Just for You" style={{ width: 40, height: 40, marginRight: 10 }} />
+              <img src={saleImg} alt="Just for You" style={{ width: 40, height: 40, marginRight: 10 }} onError={handleImageError} />
               <Typography sx={{ fontWeight: 600, fontSize: '1rem' }}>Just for You</Typography>
               <Typography sx={{ ml: 1, color: '#fd862c' }}>★</Typography>
             </Box>
@@ -283,14 +288,14 @@ const Profile = () => {
               <Grid container spacing={2} justifyContent="space-between" alignItems="flex-start">
                 <Grid item xs={12} md={3}>
                   <Box display="flex" alignItems="center" mb={1}>
-                    <img src={LokalLogo} alt="Lokal Footer Logo" style={{ height: 50 }} />
+                    <img src={LokalLogo} alt="Lokal Footer Logo" style={{ height: 50 }} onError={handleImageError} />
                   </Box>
                   <Typography color="#666" mb={1} fontSize={12}>
                     Download the app:
                   </Typography>
                   <Box display="flex" gap={1}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style={{ height: '30px', width: 'auto' }} />
-                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" style={{ height: '30px', width: 'auto' }} />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style={{ height: '30px', width: 'auto' }} onError={handleImageError} />
+                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" style={{ height: '30px', width: 'auto' }} onError={handleImageError} />
                   </Box>
                 </Grid>
                 <Grid item xs={6} md={2}>
@@ -329,7 +334,7 @@ const Profile = () => {
                       { src: "https://cdn-icons-png.flaticon.com/512/3536/3536505.png", alt: "LinkedIn" },
                     ].map(({ src, alt }) => (
                       <IconButton key={alt} sx={{ p: 0.5, backgroundColor: 'rgba(0,0,0,0.05)', '&:hover': { backgroundColor: 'rgba(0,0,0,0.1)' } }}>
-                        <img src={src} alt={alt} width={20} height={20} />
+                        <img src={src} alt={alt} width={20} height={20} onError={handleImageError} />
                       </IconButton>
                     ))}
                   </Box>
@@ -338,8 +343,8 @@ const Profile = () => {
               <Box mt={2} display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap">
                 <Typography fontSize={12} color="#666">©2025 LoKal. All rights reserved</Typography>
                 <Box mt={1} display="flex" gap={1}>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '18px', width: 'auto' }} />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style={{ height: '18px', width: 'auto' }} />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '18px', width: 'auto' }} onError={handleImageError} />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style={{ height: '18px', width: 'auto' }} onError={handleImageError} />
                 </Box>
               </Box>
             </Container>

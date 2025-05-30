@@ -1,46 +1,28 @@
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { Box, Grid, Typography, BottomNavigation, BottomNavigationAction } from '@mui/material';
-import relaxedFitWoolCoat from '../../assets/Rectangle.png';
-import beigePuffSleeve from '../../assets/Rectangle (1).png';
-import aquaBlack from '../../assets/Rectangle (2).png';
-import pinkTote from '../../assets/Rectangle (3).png';
-import blueBag from '../../assets/Rectangle (4).png';
-import amberDress from '../../assets/Rectangle (5).png';
-import greyWatch from '../../assets/Rectangle (6).png';
-import blackSet from '../../assets/Rectangle (7).png';
-import midnightBlack from '../../assets/Rectangle (8).png';
-import treeHugger from '../../assets/Rectangle (9).png';
-import greenHoodie from '../../assets/Rectangle (10).png';
-import mintSet from '../../assets/Rectangle (11).png';
-import woolTop from '../../assets/Rectangle (12).png';
-import BrownJacket from '../../assets/Rectangle (13).png';
-import olivePyjama from '../../assets/Rectangle (14).png';
-import forrestHoodie from '../../assets/Rectangle (15).png';
-import bagsS from '../../assets/Circle.png';
-import watchesS from '../../assets/Circle(2).png';
-import HoodiesS from '../../assets/Circle(3).png';
-import TrainersS from '../../assets/Circle(4).png';
-import tshirtS from '../../assets/Circle(5).png';
-import shoesS from '../../assets/Circle(6).png';
-import shirtsS from '../../assets/Circle(7).png';
-import poloO from '../../assets/Circle(8).png';
-import dressesS from '../../assets/Circle(9).png';
-import tunicsS from '../../assets/Circle(10).png';
-import { Search, ExpandMore, ExpandLess, ArrowForward, Close, Home, Favorite, ShoppingCart, Receipt, Person } from '@mui/icons-material';
-import logoImg from '../../assets/logo.png';
+import { Search, ExpandMore, ExpandLess, ArrowForward, Close, Home, Favorite, ShoppingCart, Receipt, Person, Add, Remove, Edit } from '@mui/icons-material';
 import LokalLogo from '../../assets/lokal.png';
+import logoImg from '../../assets/logo.png';
 import clothingImg from '../../assets/clothing.png';
 import shoesImg from '../../assets/shoes.png';
 import bagsImg from '../../assets/bags.png';
 import accessoriesImg from '../../assets/accessories.png';
 import saleImg from '../../assets/sale.png';
+import REC from '../../assets/Rectangle (5).png';
+import rec1 from '../../assets/Rectangle (1).png';
+import Girl from '../../assets/girl.png';
+import gym from '../../assets/white.png';
+import bag from '../../assets/bags.png';
 import {
   AppBar,
   Toolbar,
+  Typography,
   Button,
-  Container,
   IconButton,
+  Box,
+  Container,
+  Grid,
+  Avatar,
   Drawer,
   Accordion,
   AccordionSummary,
@@ -48,9 +30,13 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Divider,
+  BottomNavigation,
+  BottomNavigationAction,
+  Card,
+  CardMedia,
+  CardContent,
 } from '@mui/material';
 import {
-  FavoriteBorder,
   ShoppingBagOutlined,
   AccountCircle,
 } from '@mui/icons-material';
@@ -69,12 +55,22 @@ const categoriesData = [
   { name: 'Accessories', image: accessoriesImg, items: [] },
 ];
 
-const Shop = () => {
+const Cart = () => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState('Clothing');
   const [gender, setGender] = useState('female');
-  const [navValue, setNavValue] = useState(0);
+  const [navValue, setNavValue] = useState(2); // Set to Cart tab
+  const [cartItems, setCartItems] = useState([
+    { id: 1, name: 'RAYAM BEIGE FUR CLOGS', color: 'Beige', size: '38', price: 705, quantity: 1, src: rec1, alt: 'pic1' },
+    { id: 2, name: 'AELIN AMBER DRESS', color: 'Red', size: 'M', price: 1600, quantity: 1, src: REC, alt: 'pic5' },
+  ]);
+
+  const [wishlistItems, setWishlistItems] = useState([
+    { id: 3, name: 'Lorem ipsum dolor sit amet consectetur.', color: 'Blue', size: 'M', price: 1546, src: Girl, alt: 'pic3' },
+    { id: 4, name: 'COMEFIT WHITE T-SHIRT', color: 'White', size: 'L', price: 2300, src: gym, alt: 'pic4' },
+    { id: 5, name: 'LEOPARD PRINTED BAG', color: '', size: '', price: 1780, src: bag, alt: 'pic7' },
+  ]);
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -90,37 +86,38 @@ const Shop = () => {
     }
   };
 
-  const categories = [
-    { name: 'Bags', src: bagsS, alt: 'Bags' },
-    { name: 'Watches', src: watchesS, alt: 'Watches' },
-    { name: 'Hoodies', src: HoodiesS, alt: 'Hoodies' },
-    { name: 'Trainers', src: TrainersS, alt: 'Trainers' },
-    { name: 'Tshirts', src: tshirtS, alt: 'Tshirts' },
-    { name: 'Shoes', src: shoesS, alt: 'Shoes' },
-    { name: 'Shirts', src: shirtsS, alt: 'Shirts' },
-    { name: 'Polo', src: poloO, alt: 'Polo' },
-    { name: 'Dresses', src: dressesS, alt: 'Dresses' },
-    { name: 'Tunics', src: tunicsS, alt: 'Tunics' },
-  ];
+  // Function to handle quantity increase
+  const handleIncreaseQuantity = (id) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
 
-  const allItems = [
-    { id: 1, name: 'RELAXED FIT WOOL KNIT POLO SHIRT', price: 'EGP 4,170', src: relaxedFitWoolCoat, alt: 'Coat' },
-    { id: 2, name: 'BEIGE FUR CLOGS', price: 'EGP 705', src: beigePuffSleeve, alt: 'Puff Sleeve' },
-    { id: 3, name: 'AQUARIUS BLACK HOODIE', price: 'EGP 1,310', src: aquaBlack, alt: 'Hoodie' },
-    { id: 4, name: 'BOHEMIAN PAISLEY PLASTIC TOTE', price: 'EGP 1,499', src: pinkTote, alt: 'Tote' },
-    { id: 5, name: 'HEMATITE METALLIC BLUE BAG', price: 'EGP 1,600', src: blueBag, alt: 'Dress' },
-    { id: 6, name: 'AMBER DRESS', price: 'EGP 1,600', src: amberDress, alt: 'Puff Sleeve' },
-    { id: 7, name: 'LEE COOPER WATCH - GREY', price: 'EGP 6,110', src: greyWatch, alt: 'Watch' },
-    { id: 8, name: 'Hana Bee URBAN STORY SET - BLACK', price: 'EGP 2,800', src: blackSet, alt: 'Set' },
-    { id: 9, name: 'Midnight Black Shirt', price: 'EGP 4,170', src: midnightBlack, alt: 'Puff Sleeve' },
-    { id: 10, name: 'TREE HUGGER', price: 'EGP 705', src: treeHugger, alt: 'Hugger' },
-    { id: 11, name: 'GREEN HOODIE', price: 'EGP 1,310', src: greenHoodie, alt: 'Hoodie' },
-    { id: 12, name: 'MINT GREEN SET', price: 'EGP 1,499', src: mintSet, alt: 'Tote' },
-    { id: 13, name: 'KNITTED WOOL TOP', price: 'EGP 800', src: woolTop, alt: 'Tote' },
-    { id: 14, name: 'BROWN LEATHER JACKET', price: 'EGP 5,499', src: BrownJacket, alt: 'Tote' },
-    { id: 15, name: 'OLIVE PYJAMA SET', price: 'EGP 1,500', src: olivePyjama, alt: 'Hugger' },
-    { id: 16, name: 'FORREST GREEN HOODIE ', price: 'EGP 905', src: forrestHoodie, alt: 'Hugger' },
-  ];
+  // Function to handle quantity decrease
+  const handleDecreaseQuantity = (id) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+      )
+    );
+  };
+
+  // Function to add wishlist item to cart
+  const handleAddToCart = (wishlistItem) => {
+    const newCartItem = { ...wishlistItem, quantity: 1 };
+    setCartItems((prevItems) => [...prevItems, newCartItem]);
+    handleRemoveFromWishlist(wishlistItem.id);
+  };
+
+  // Function to remove item from wishlist
+  const handleRemoveFromWishlist = (id) => {
+    setWishlistItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+  // Calculate total price
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <>
@@ -128,10 +125,10 @@ const Shop = () => {
         :root {
           font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
           line-height: 1.5;
-          font-weight: 400;
+          font-weight: normal;
           color-scheme: light;
           color: rgba(5, 5, 5, 0.87);
-          background-color: #242424;
+          background-color: #fff;
           font-synthesis: none;
           text-rendering: optimizeLegibility;
           -webkit-font-smoothing: antialiased;
@@ -209,9 +206,6 @@ const Shop = () => {
 
         {/* Mobile Header - Visible on xs */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', py: 1, px: 2, backgroundColor: 'white', borderBottom: '2px solid #e0e0e0' }}>
-          <Typography variant="h6" sx={{ color: '#334B1C', fontWeight: 550, fontSize: '23px', mr: 2 }}>
-            Shop
-          </Typography>
           <Box sx={{ flexGrow: 1, position: 'relative', maxWidth: '100%' }}>
             <input
               placeholder="Search"
@@ -236,10 +230,10 @@ const Shop = () => {
           anchor="left"
           open={drawerOpen}
           onClose={handleDrawerToggle}
-          sx={{ '& .MuiDrawer-paper': { width: { xs: '80%', md: '400px' }, bgcolor: '#fff', p: 2, boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)', borderRadius: '0 8px 8px 0', transition: 'transform 0.3s ease-in-out' } }}
+          sx={{ '& .MuiDrawer-paper': { width: { xs: '80%', sm: '400px' }, bgcolor: '#fff', p: 2, boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)', borderRadius: '0 8px 8px 0', transition: 'transform 0.3s ease-in-out' } }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: '#334B1C' }}>All Categories</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#334B1C' }}> Empowering Local Brands</Typography>
             <IconButton onClick={handleDrawerToggle}>
               <Close sx={{ color: '#FD862C' }} />
             </IconButton>
@@ -293,145 +287,201 @@ const Shop = () => {
           </Box>
         </Drawer>
 
-        {/* Categories Section */}
-        <Container maxWidth="lg" sx={{ py: 3 }}>
-          <Grid container spacing={2} sx={{ justifyContent: 'center', marginBottom: '40px' }}>
-            {categories.map((category) => (
-              <Grid item xs={12} md={3} key={category.name}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Box
-                    sx={{
-                      backgroundColor: '#F8E2CF',
-                      borderRadius: '50%',
-                      width: '100px',
-                      height: '100px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      margin: '0 auto',
-                      '&:hover': { transform: 'scale(1.05)', transition: 'transform 0.3s ease' }
-                    }}
-                  >
-                    <img src={category.src} alt={category.alt} style={{ borderRadius: '50%', width: '90%', height: '90%', objectFit: 'cover' }} />
-                  </Box>
-                  <Typography variant="body2" sx={{ marginTop: '8px', color: '#4a4a4a', fontWeight: 500 }}>
-                    {category.name}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-
-          {/* All Items Section */}
-          <Box sx={{ marginBottom: '40px' }}>
-            <Typography variant="h5" sx={{ color: '#ff9800', marginBottom: '30px', fontWeight: 'bold', fontSize: '28px' }}>
-              All items
+        {/* Main Cart Section */}
+        <Box sx={{ flex: 1, py: 2 }}>
+          <Container>
+            {/* Shipping Address */}
+            <Typography variant="h6" sx={{ color: '#334B1C', fontWeight: 550, fontSize: '3rem', mr: "5px" }}>
+              Cart
             </Typography>
-            <Grid container spacing={5}>
-              {allItems.map((item) => (
-                <Grid item xs={12} md={4} key={item.id}>
-                  <Box
-                    onClick={() => navigate('/product', { state: { product: item } })}
-                    sx={{
-                      textAlign: 'center',
-                      backgroundColor: '#fff',
-                      padding: '30px',
-                      borderRadius: '8px',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                      width: '198px',
-                      height: '370px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                      '&:hover': { 
-                        transform: 'translateY(-5px)', 
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                        cursor: 'pointer'
-                      }
-                    }}
-                  >
-                    <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '15px' }}>
-                      <img src={item.src} alt={item.alt} style={{ width: '200px', height: '250px', objectFit: 'cover', borderRadius: '4px' }} />
-                    </Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#333', marginBottom: '8px', fontSize: '16px', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {item.name}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#334B1C', fontWeight: '600', fontSize: '15px' }}>
-                      {item.price}
-                    </Typography>
+            <Box sx={{ mb: 3, backgroundColor: '#F8E2CF', borderRadius: 2, p: 2, boxShadow: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h6" sx={{ color: '#334B1C', fontWeight: 550, fontSize: '1.3rem' }}>
+                  Shipping Address
+                </Typography>
+                <IconButton sx={{ bgcolor: '#334B1C', '&:hover': { bgcolor: '#2A3E16' } }}>
+                  <Edit sx={{ color: '#fff', fontSize: '16px' }} />
+                </IconButton>
+              </Box>
+              <Typography sx={{ color: '#666', fontSize: '1rem', mt: 0.5 }}>
+                9 Shaker Khayat Gleem
+              </Typography>
+            </Box>
+
+            {/* Cart Items */}
+            {cartItems.map((item) => (
+              <Card key={item.id} sx={{ display: 'flex', mb: 2, borderRadius: 2, boxShadow: 1 }}>
+                <CardMedia
+                  component="img"
+                  sx={{ width: 100, height: 100, objectFit: 'cover' }}
+                  image={item.src}
+                  alt={item.alt}
+                />
+                <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 550 }}>{item.name}</Typography>
+                    <Typography variant="body2" sx={{ color: '#666' }}>{item.color}, Size {item.size}</Typography>
+                    <Typography variant="body2" sx={{ color: '#334B1C', fontWeight: 550 }}>EGP {item.price}</Typography>
                   </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        </Container>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDecreaseQuantity(item.id)}
+                      sx={{
+                        border: '1px solid #666',
+                        borderRadius: '50%',
+                        width: 24,
+                        height: 24,
+                        '&:hover': { backgroundColor: '#e0e0e0' },
+                      }}
+                    >
+                      <Remove sx={{ color: '#666', fontSize: 16 }} />
+                    </IconButton>
+                    <Typography>{item.quantity}</Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleIncreaseQuantity(item.id)}
+                      sx={{
+                        border: '1px solid #666',
+                        borderRadius: '50%',
+                        width: 24,
+                        height: 24,
+                        '&:hover': { backgroundColor: '#e0e0e0' },
+                      }}
+                    >
+                      <Add sx={{ color: '#666', fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Wishlist Section */}
+            <Typography variant="h6" sx={{ color: '#334B1C', fontWeight: 550, mt: 4, mb: 2 }}>
+              From your Wishlist
+            </Typography>
+            {wishlistItems.map((item) => (
+              <Card key={item.id} sx={{ display: 'flex', mb: 2, borderRadius: 2, boxShadow: 1 }}>
+                <CardMedia
+                  component="img"
+                  sx={{ width: 100, height: 100, objectFit: 'cover' }}
+                  image={item.src}
+                  alt={item.alt}
+                />
+                <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 550 }}>{item.name}</Typography>
+                    {item.color && item.size && (
+                      <Typography variant="body2" sx={{ color: '#666' }}>{item.color}, Size {item.size}</Typography>
+                    )}
+                    <Typography variant="body2" sx={{ color: '#334B1C', fontWeight: 550 }}>EGP {item.price}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleAddToCart(item)}
+                      sx={{
+                        border: '1px solid #334B1C',
+                        borderRadius: '50%',
+                        width: 24,
+                        height: 24,
+                        '&:hover': { backgroundColor: '#e0e0e0' },
+                      }}
+                    >
+                      <ShoppingCart sx={{ color: '#334B1C', fontSize: 16 }} />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleRemoveFromWishlist(item.id)}
+                      sx={{
+                        border: '1px solid #666',
+                        borderRadius: '50%',
+                        width: 24,
+                        height: 24,
+                        '&:hover': { backgroundColor: '#e0e0e0' },
+                      }}
+                    >
+                      <Close sx={{ color: '#666', fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Total and Checkout Button */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 550, color: '#334B1C' }}>Total: EGP {total.toFixed(2)}</Typography>
+              <Button variant="contained" sx={{ bgcolor: '#334B1C', color: '#F8E2CF', borderRadius: 2, px: 4, py: 1 }}>
+                Checkout
+              </Button>
+            </Box>
+          </Container>
+        </Box>
 
         {/* Desktop Footer - Visible on md and above */}
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Box bgcolor="#F8E2CF" py={4} sx={{ width: '100%', mt: 'auto' }}>
+          <Box bgcolor="#F8E2CF" py={2} sx={{ width: '100%', mt: 'auto' }}>
             <Container maxWidth="lg">
-              <Grid container spacing={4} justifyContent="space-between" alignItems="flex-start">
+              <Grid container spacing={2} justifyContent="space-between" alignItems="flex-start">
                 <Grid item xs={12} md={3}>
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <img src={LokalLogo} alt="Lokal Footer Logo" style={{ height: 60 }} />
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <img src={LokalLogo} alt="Lokal Footer Logo" style={{ height: 50 }} />
                   </Box>
-                  <Typography color="#666" mb={2} fontSize={15}>
+                  <Typography color="#666" mb={1} fontSize={12}>
                     Download the app:
                   </Typography>
                   <Box display="flex" gap={1}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style={{ height: '40px', width: 'auto' }} />
-                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" style={{ height: '40px', width: 'auto' }} />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style={{ height: '30px', width: 'auto' }} />
+                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" style={{ height: '30px', width: 'auto' }} />
                   </Box>
                 </Grid>
                 <Grid item xs={6} md={2}>
-                  <Typography fontWeight="bold" color="#333" mb={2} fontSize={16}>
+                  <Typography fontWeight="bold" color="#333" mb={1} fontSize={14}>
                     Pages
                   </Typography>
                   {['Home', 'Shop', 'Categories', 'Cart', 'Profile'].map((page) => (
-                    <Typography key={page} color="#666" fontSize={14} mb={1}>{page}</Typography>
+                    <Typography key={page} color="#666" fontSize={12} mb={0.5}>{page}</Typography>
                   ))}
                 </Grid>
                 <Grid item xs={6} md={2}>
-                  <Typography fontWeight="bold" color="#333" mb={2} fontSize={16}>
+                  <Typography fontWeight="bold" color="#333" mb={1} fontSize={14}>
                     Customer Service
                   </Typography>
                   {['Shipping & Returns', 'Terms & Conditions', 'Privacy Policy', 'FAQs', 'Contact Us'].map((item) => (
-                    <Typography key={item} color="#666" fontSize={14} mb={1}>{item}</Typography>
+                    <Typography key={item} color="#666" fontSize={12} mb={0.5}>{item}</Typography>
                   ))}
                 </Grid>
                 <Grid item xs={6} md={2}>
-                  <Typography fontWeight="bold" color="#333" mb={2} fontSize={16}>
+                  <Typography fontWeight="bold" color="#333" mb={1} fontSize={14}>
                     Contact
                   </Typography>
-                  <Typography color="#666" fontSize={14} mb={1}>📞 (+20) 12345678910</Typography>
-                  <Typography color="#666" fontSize={14} mb={1}>📧 Lokal123@gmail.com</Typography>
-                  <Typography color="#666" fontSize={14} mb={1}>📍 2972 Smouha Rd. Garden City St, Alexandria</Typography>
+                  <Typography color="#666" fontSize={12} mb={0.5}>📞 (+20) 12345678910</Typography>
+                  <Typography color="#666" fontSize={12} mb={0.5}>📧 Lokal123@gmail.com</Typography>
+                  <Typography color="#666" fontSize={12} mb={0.5}>📍 2972 Smouha Rd. Garden City St, Alexandria</Typography>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                  <Typography fontWeight="bold" color="#333" mb={2} fontSize={16}>
+                  <Typography fontWeight="bold" color="#333" mb={1} fontSize={14}>
                     Follow us
                   </Typography>
-                  <Box display="flex" gap={2} mt={1}>
+                  <Box display="flex" gap={1} mt={1}>
                     {[
                       { src: "https://cdn-icons-png.flaticon.com/512/124/124010.png", alt: "Facebook" },
                       { src: "https://cdn-icons-png.flaticon.com/512/733/733579.png", alt: "Twitter" },
                       { src: "https://cdn-icons-png.flaticon.com/512/2111/2111463.png", alt: "Instagram" },
                       { src: "https://cdn-icons-png.flaticon.com/512/3536/3536505.png", alt: "LinkedIn" },
                     ].map(({ src, alt }) => (
-                      <IconButton key={alt} sx={{ p: 1, backgroundColor: 'rgba(0,0,0,0.05)', '&:hover': { backgroundColor: 'rgba(0,0,0,0.1)' } }}>
-                        <img src={src} alt={alt} width={24} height={24} />
+                      <IconButton key={alt} sx={{ p: 0.5, backgroundColor: 'rgba(0,0,0,0.05)', '&:hover': { backgroundColor: 'rgba(0,0,0,0.1)' } }}>
+                        <img src={src} alt={alt} width={20} height={20} />
                       </IconButton>
                     ))}
                   </Box>
                 </Grid>
               </Grid>
-              <Box mt={4} display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap">
-                <Typography fontSize={14} color="#666">©2025 LoKal. All rights reserved</Typography>
+              <Box mt={2} display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap">
+                <Typography fontSize={12} color="#666">©2025 LoKal. All rights reserved</Typography>
                 <Box mt={1} display="flex" gap={1}>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '24px', width: 'auto' }} />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style={{ height: '24px', width: 'auto' }} />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style={{ height: '18px', width: 'auto' }} />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style={{ height: '18px', width: 'auto' }} />
                 </Box>
               </Box>
             </Container>
@@ -490,4 +540,4 @@ const Shop = () => {
   );
 };
 
-export default Shop;
+export default Cart;

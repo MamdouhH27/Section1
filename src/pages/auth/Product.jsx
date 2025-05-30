@@ -119,7 +119,7 @@ const ProductPage = () => {
                 <IconButton sx={{ color: '#334B1C', padding: '8px' }}>
                   <Favorite sx={{ fontSize: '37px' }} />
                 </IconButton>
-                <IconButton sx={{ color: '#334B1C', padding: '8px' }}>
+                <IconButton sx={{ color: '#334B1C', padding: '8px' }} onClick={() => navigate('/cart')}>
                   <ShoppingBagOutlined sx={{ fontSize: '37px' }} />
                 </IconButton>
                 <IconButton sx={{ color: '#334B1C', padding: '8px' }} onClick={() => navigate('/profile')}>

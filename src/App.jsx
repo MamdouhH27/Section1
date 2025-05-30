@@ -5,6 +5,7 @@ import Signup from './pages/auth/Signup';
 import Profile from './pages/auth/Profile';
 import Shop from './pages/auth/Shop';
 import Product from './pages/auth/Product';
+import Cart from './pages/auth/Cart';
 
 import './App.css';
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product" element={<Product />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/" element={<Login />} />
         </Routes>
       </div>
