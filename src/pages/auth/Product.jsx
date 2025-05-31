@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -22,18 +22,39 @@ import {
   Receipt,
   Person,
 } from '@mui/icons-material';
+import { useCart } from '../../CartContext';
 import logoImg from '../../assets/logo.png';
 import LokalLogo from '../../assets/lokal.png';
 import tshirtS from '../../assets/Circle(5).png';
-import var3 from '../../assets/var3.jpg'; // Placeholder; replace with actual path
-import var2 from '../../assets/var2.jpg'; // Placeholder; replace with actual path
-import var1 from '../../assets/var1.jpg'; // Placeholder; replace with actual path
+import var2 from '../../assets/var2.jpg';
+import var1 from '../../assets/var1.jpg';
+import var3 from '../../assets/Circle(5).png';
 import ramy from '../../assets/ramy.jpg';
 
 const ProductPage = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [navValue, setNavValue] = useState(0);
+  const [selectedColor, setSelectedColor] = useState('Black');
+  const [selectedSize, setSelectedSize] = useState('M');
+  const [mainImage, setMainImage] = useState(tshirtS); // Default main image
+  const [selectedDelivery, setSelectedDelivery] = useState('Standard'); // Default delivery option
+
+  // Variant images with corresponding colors
+  const variantImages = [
+    { src: var1, color: 'White' },
+    { src: var2, color: 'Gray' },
+    { src: var3, color: 'Black' },
+  ];
+
+  // Set selectedSize from the location state if available
+  useEffect(() => {
+    if (state?.selectedSize) {
+      setSelectedSize(state.selectedSize);
+    }
+  }, [state?.selectedSize]);
 
   const handleDecrement = () => {
     if (quantity > 1) {
@@ -43,6 +64,35 @@ const ProductPage = () => {
 
   const handleIncrement = () => {
     setQuantity(quantity + 1);
+  };
+
+  const handleAddToCart = () => {
+    const product = {
+      id: 100, // Unique ID for the product (adjust as needed)
+      name: 'Soft Cozy T-Shirt',
+      color: selectedColor,
+      size: selectedSize,
+      price: 1950,
+      quantity,
+      src: mainImage, // Use the current main image
+      alt: 'Product',
+      delivery: selectedDelivery, // Include selected delivery option
+    };
+    addToCart(product);
+    navigate('/cart');
+  };
+
+  const handleVariantSelect = (variant) => {
+    setMainImage(variant.src); // Update main image
+    setSelectedColor(variant.color); // Update selected color
+  };
+
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+  };
+
+  const handleDeliverySelect = (option) => {
+    setSelectedDelivery(option);
   };
 
   return (
@@ -136,7 +186,7 @@ const ProductPage = () => {
           <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: { xs: 1, md: 2 } }}>
             <Box
               component="img"
-              src={tshirtS}
+              src={mainImage}
               alt="Product"
               sx={{
                 width: '500px',
@@ -161,70 +211,77 @@ const ProductPage = () => {
 
               {/* Variations */}
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography sx={{ color: '#50554A', fontSize: { xs: '0.75rem', md: '1rem' }, fontWeight: 'medium' }}>Variations:</Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  <Typography
-                    sx={{
-                      color: '#50554A',
-                      fontSize: { xs: '0.75rem', md: '1rem' },
-                      padding: '4px 8px',
-                      border: '1px solid #50554A',
-                      borderRadius: 2,
-                      backgroundColor: 'transparent',
-                    }}
-                  >
-                    Black
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: '#50554A',
-                      fontSize: { xs: '0.75rem', md: '1rem' },
-                      padding: '4px 8px',
-                      border: '1px solid #50554A',
-                      borderRadius: 2,
-                      backgroundColor: 'transparent',
-                    }}
-                  >
-                    M
-                  </Typography>
+                <Typography sx={{ color: '#000', fontSize: { xs: '0.75rem', md: '1.5rem' }, fontWeight: 'medium' }}>
+                  Variations:
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ color: '#50554A', fontSize: { xs: '0.75rem', md: '1rem' } }}>
+                      Color: {selectedColor}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ color: '#50554A', fontSize: { xs: '0.75rem', md: '1rem' } }}>
+                      Size: {selectedSize}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
 
-              {/* Variant Images */}
+              {/* Variant Images as Buttons */}
               <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, flexWrap: 'wrap' }}>
-                <Box
-                  component="img"
-                  src={var3}
-                  alt="Var3"
-                  sx={{
-                    width: { xs: 60, md: 100 },
-                    height: { xs: 60, md: 100 },
-                    borderRadius: 2,
-                    objectFit: 'cover',
-                  }}
-                />
-                <Box
-                  component="img"
-                  src={var2}
-                  alt="Var2"
-                  sx={{
-                    width: { xs: 60, md: 100 },
-                    height: { xs: 60, md: 100 },
-                    borderRadius: 2,
-                    objectFit: 'cover',
-                  }}
-                />
-                <Box
-                  component="img"
-                  src={var1}
-                  alt="Var1"
-                  sx={{
-                    width: { xs: 60, md: 100 },
-                    height: { xs: 60, md: 100 },
-                    borderRadius: 2,
-                    objectFit: 'cover',
-                  }}
-                />
+                {variantImages.map((variant, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => handleVariantSelect(variant)}
+                    sx={{
+                      padding: 0,
+                      border: selectedColor === variant.color ? '2px solid #FD862C' : '1px solid #50554A',
+                      borderRadius: 2,
+                      backgroundColor: 'transparent',
+                      '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' },
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={variant.src}
+                      alt={`Variant ${index + 1}`}
+                      sx={{
+                        width: { xs: 60, md: 100 },
+                        height: { xs: 60, md: 100 },
+                        borderRadius: 2,
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </Button>
+                ))}
+              </Box>
+
+              {/* Size Selection */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {['S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map((size) => (
+                    <Button
+                      key={size}
+                      variant={selectedSize === size ? 'contained' : 'outlined'}
+                      sx={{
+                        minWidth: { xs: '30px', md: '60px' },
+                        px: { xs: 1, md: 2 },
+                        py: { xs: 0.5, md: 1 },
+                        borderWidth: '2px',
+                        borderRadius: 2,
+                        borderColor: size === selectedSize ? '#F5E8C7' : size === 'XXL' || size === 'XXXL' ? '#1C2525' : '#000000',
+                        backgroundColor: size === selectedSize ? '#F8E2CF' : size === 'XXL' || size === 'XXXL' ? '#50554A' : '#F9F9F9',
+                        color: '#000000',
+                        fontSize: { xs: '0.75rem', md: '1rem' },
+                        '&:hover': { backgroundColor: '#f5f5f5' },
+                      }}
+                      onClick={() => handleSizeSelect(size)}
+                    >
+                      {size}
+                    </Button>
+                  ))}
+                </Box>
               </Box>
 
               {/* Size Guide */}
@@ -235,37 +292,13 @@ const ProductPage = () => {
                   fontSize: { xs: '0.75rem', md: '1rem' },
                   fontWeight: 'medium',
                   textDecoration: 'none',
-                  fontSize: '0.875rem',
+                  fontSize: '1.2rem',
                 }}
                 onMouseOver={(e) => (e.target.style.textDecoration = 'underline')}
                 onMouseOut={(e) => (e.target.style.textDecoration = 'none')}
               >
                 Size Guide
               </a>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {['S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map((size) => (
-                    <Button
-                      key={size}
-                      variant="outlined"
-                      sx={{
-                        minWidth: { xs: '30px', md: '60px' },
-                        px: { xs: 1, md: 2 },
-                        py: { xs: 0.5, md: 1 },
-                        borderWidth: '2px',
-                        borderRadius: 2,
-                        borderColor: size === 'M' ? '#F5E8C7' : size === 'XXL' || size === 'XXXL' ? '#1C2525' : '#000000',
-                        backgroundColor: size === 'M' ? '#F8E2CF' : size === 'XXL' || size === 'XXXL' ? '#50554A' : '#F9F9F9',
-                        color: '#000000',
-                        fontSize: { xs: '0.75rem', md: '1rem' },
-                        '&:hover': { backgroundColor: '#f5f5f5' },
-                      }}
-                    >
-                      {size}
-                    </Button>
-                  ))}
-                </Box>
-              </Box>
 
               {/* Quantity */}
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -329,6 +362,7 @@ const ProductPage = () => {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   <Button
                     variant="outlined"
+                    onClick={() => handleDeliverySelect('Standard')}
                     sx={{
                       border: '2px solid #FD862C',
                       color: '#334B1C',
@@ -339,6 +373,10 @@ const ProductPage = () => {
                       justifyContent: 'space-between',
                       width: '100%',
                       fontSize: { xs: '0.75rem', md: '1rem' },
+                      backgroundColor: selectedDelivery === 'Standard' ? '#FD862C' : 'transparent',
+                      '&:hover': {
+                        backgroundColor: selectedDelivery === 'Standard' ? '#FD862C' : 'rgba(0, 0, 0, 0.05)',
+                      },
                     }}
                   >
                     <Typography>Standard</Typography>
@@ -347,10 +385,10 @@ const ProductPage = () => {
                   </Button>
                   <Button
                     variant="outlined"
+                    onClick={() => handleDeliverySelect('Express')}
                     sx={{
-                      color: '#334B1C',
-                      backgroundColor: '#FD862C',
                       border: '2px solid #FD862C',
+                      color: '#334B1C',
                       borderRadius: 2,
                       py: { xs: 1, md: 2 },
                       px: { xs: 1, md: 2 },
@@ -358,11 +396,15 @@ const ProductPage = () => {
                       justifyContent: 'space-between',
                       width: '100%',
                       fontSize: { xs: '0.75rem', md: '1rem' },
+                      backgroundColor: selectedDelivery === 'Express' ? '#FD862C' : 'transparent',
+                      '&:hover': {
+                        backgroundColor: selectedDelivery === 'Express' ? '#FD862C' : 'rgba(0, 0, 0, 0.05)',
+                      },
                     }}
                   >
                     <Typography>Express</Typography>
                     <Typography>(1-2 days)</Typography>
-                    <Typography sx={{ fontWeight: 'medium' }}>EGP 30.00</Typography>
+                    <Typography sx={{fontWeight: 'medium' }}>EGP 30.00</Typography>
                   </Button>
                 </Box>
               </Box>
@@ -443,6 +485,7 @@ const ProductPage = () => {
                     minWidth: { xs: '80px', md: 'auto' },
                     '&:hover': { backgroundColor: '#1b5e20' },
                   }}
+                  onClick={handleAddToCart}
                 >
                   Add to cart
                 </Button>

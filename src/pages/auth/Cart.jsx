@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ExpandMore, ExpandLess, ArrowForward, Close, Home, Favorite, ShoppingCart, Receipt, Person, Add, Remove, Edit } from '@mui/icons-material';
+import { useCart } from '../../CartContext';
 import LokalLogo from '../../assets/lokal.png';
 import logoImg from '../../assets/logo.png';
 import clothingImg from '../../assets/clothing.png';
@@ -8,8 +9,6 @@ import shoesImg from '../../assets/shoes.png';
 import bagsImg from '../../assets/bags.png';
 import accessoriesImg from '../../assets/accessories.png';
 import saleImg from '../../assets/sale.png';
-import REC from '../../assets/Rectangle (5).png';
-import rec1 from '../../assets/Rectangle (1).png';
 import Girl from '../../assets/girl.png';
 import gym from '../../assets/white.png';
 import bag from '../../assets/bags.png';
@@ -22,7 +21,6 @@ import {
   Box,
   Container,
   Grid,
-  Avatar,
   Drawer,
   Accordion,
   AccordionSummary,
@@ -57,15 +55,11 @@ const categoriesData = [
 
 const Cart = () => {
   const navigate = useNavigate();
+  const { cartItems, addToCart, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState('Clothing');
   const [gender, setGender] = useState('female');
-  const [navValue, setNavValue] = useState(2); // Set to Cart tab
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'RAYAM BEIGE FUR CLOGS', color: 'Beige', size: '38', price: 705, quantity: 1, src: rec1, alt: 'pic1' },
-    { id: 2, name: 'AELIN AMBER DRESS', color: 'Red', size: 'M', price: 1600, quantity: 1, src: REC, alt: 'pic5' },
-  ]);
-
+  const [navValue, setNavValue] = useState(2);
   const [wishlistItems, setWishlistItems] = useState([
     { id: 3, name: 'Lorem ipsum dolor sit amet consectetur.', color: 'Blue', size: 'M', price: 1546, src: Girl, alt: 'pic3' },
     { id: 4, name: 'COMEFIT WHITE T-SHIRT', color: 'White', size: 'L', price: 2300, src: gym, alt: 'pic4' },
@@ -86,37 +80,16 @@ const Cart = () => {
     }
   };
 
-  // Function to handle quantity increase
-  const handleIncreaseQuantity = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
-  };
-
-  // Function to handle quantity decrease
-  const handleDecreaseQuantity = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-      )
-    );
-  };
-
-  // Function to add wishlist item to cart
   const handleAddToCart = (wishlistItem) => {
     const newCartItem = { ...wishlistItem, quantity: 1 };
-    setCartItems((prevItems) => [...prevItems, newCartItem]);
-    handleRemoveFromWishlist(wishlistItem.id);
+    addToCart(newCartItem); // Add to cart using CartContext
+    setWishlistItems((prevItems) => prevItems.filter((item) => item.id !== wishlistItem.id)); // Remove from wishlist
   };
 
-  // Function to remove item from wishlist
   const handleRemoveFromWishlist = (id) => {
     setWishlistItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  // Calculate total price
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
@@ -258,7 +231,7 @@ const Cart = () => {
                 <Typography sx={{ fontWeight: 600, fontSize: '1rem' }}>{category.name}</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Grid container spacing={1}>
+                <Grid container spacing={1}/>
                   {category.items.map((item) => (
                     <Grid item xs={12} key={item}>
                       <Button
@@ -270,8 +243,7 @@ const Cart = () => {
                       </Button>
                     </Grid>
                   ))}
-                </Grid>
-              </AccordionDetails>
+                </AccordionDetails>
             </Accordion>
           ))}
           <Divider sx={{ my: 2 }} />
@@ -309,104 +281,129 @@ const Cart = () => {
             </Box>
 
             {/* Cart Items */}
-            {cartItems.map((item) => (
-              <Card key={item.id} sx={{ display: 'flex', mb: 2, borderRadius: 2, boxShadow: 1 }}>
-                <CardMedia
-                  component="img"
-                  sx={{ width: 100, height: 100, objectFit: 'cover' }}
-                  image={item.src}
-                  alt={item.alt}
-                />
-                <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 550 }}>{item.name}</Typography>
-                    <Typography variant="body2" sx={{ color: '#666' }}>{item.color}, Size {item.size}</Typography>
-                    <Typography variant="body2" sx={{ color: '#334B1C', fontWeight: 550 }}>EGP {item.price}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDecreaseQuantity(item.id)}
-                      sx={{
-                        border: '1px solid #666',
-                        borderRadius: '50%',
-                        width: 24,
-                        height: 24,
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                      }}
-                    >
-                      <Remove sx={{ color: '#666', fontSize: 16 }} />
-                    </IconButton>
-                    <Typography>{item.quantity}</Typography>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleIncreaseQuantity(item.id)}
-                      sx={{
-                        border: '1px solid #666',
-                        borderRadius: '50%',
-                        width: 24,
-                        height: 24,
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                      }}
-                    >
-                      <Add sx={{ color: '#666', fontSize: 16 }} />
-                    </IconButton>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
+            {cartItems.length === 0 ? (
+              <Typography variant="h6" sx={{ color: '#666', textAlign: 'center', my: 4 }}>
+                Your cart is empty.
+              </Typography>
+            ) : (
+              cartItems.map((item) => (
+                <Card key={`${item.id}-${item.color}-${item.size}`} sx={{ display: 'flex', mb: 2, borderRadius: 2, boxShadow: 1 }}>
+                  <CardMedia
+                    component="img"
+                    sx={{ width: 100, height: 100, objectFit: 'cover' }}
+                    image={item.src}
+                    alt={item.alt}
+                  />
+                  <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 550 }}>{item.name}</Typography>
+                      <Typography variant="body2" sx={{ color: '#666' }}>{item.color}, Size {item.size}</Typography>
+                      <Typography variant="body2" sx={{ color: '#334B1C', fontWeight: 550 }}>EGP {item.price}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => decreaseQuantity(item.id, item.color, item.size)}
+                        sx={{
+                          border: '1px solid #666',
+                          borderRadius: '50%',
+                          width: 24,
+                          height: 24,
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                        }}
+                      >
+                        <Remove sx={{ color: '#666', fontSize: 16 }} />
+                      </IconButton>
+                      <Typography>{item.quantity}</Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() => increaseQuantity(item.id, item.color, item.size)}
+                        sx={{
+                          border: '1px solid #666',
+                          borderRadius: '50%',
+                          width: 24,
+                          height: 24,
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                        }}
+                      >
+                        <Add sx={{ color: '#666', fontSize: 16 }} />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => removeFromCart(item.id, item.color, item.size)}
+                        sx={{
+                          border: '1px solid #666',
+                          borderRadius: '50%',
+                          width: 24,
+                          height: 24,
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                        }}
+                      >
+                        <Close sx={{ color: '#666', fontSize: 16 }} />
+                      </IconButton>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))
+            )}
 
             {/* Wishlist Section */}
             <Typography variant="h6" sx={{ color: '#334B1C', fontWeight: 550, mt: 4, mb: 2 }}>
               From your Wishlist
             </Typography>
-            {wishlistItems.map((item) => (
-              <Card key={item.id} sx={{ display: 'flex', mb: 2, borderRadius: 2, boxShadow: 1 }}>
-                <CardMedia
-                  component="img"
-                  sx={{ width: 100, height: 100, objectFit: 'cover' }}
-                  image={item.src}
-                  alt={item.alt}
-                />
-                <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 550 }}>{item.name}</Typography>
-                    {item.color && item.size && (
-                      <Typography variant="body2" sx={{ color: '#666' }}>{item.color}, Size {item.size}</Typography>
-                    )}
-                    <Typography variant="body2" sx={{ color: '#334B1C', fontWeight: 550 }}>EGP {item.price}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleAddToCart(item)}
-                      sx={{
-                        border: '1px solid #334B1C',
-                        borderRadius: '50%',
-                        width: 24,
-                        height: 24,
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                      }}
-                    >
-                      <ShoppingCart sx={{ color: '#334B1C', fontSize: 16 }} />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleRemoveFromWishlist(item.id)}
-                      sx={{
-                        border: '1px solid #666',
-                        borderRadius: '50%',
-                        width: 24,
-                        height: 24,
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                      }}
-                    >
-                      <Close sx={{ color: '#666', fontSize: 16 }} />
-                    </IconButton>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
+            {wishlistItems.length === 0 ? (
+              <Typography variant="h6" sx={{ color: '#666', textAlign: 'center', my: 4 }}>
+                Your wishlist is empty.
+              </Typography>
+            ) : (
+              wishlistItems.map((item) => (
+                <Card key={item.id} sx={{ display: 'flex', mb: 2, borderRadius: 2, boxShadow: 1 }}>
+                  <CardMedia
+                    component="img"
+                    sx={{ width: 100, height: 100, objectFit: 'cover' }}
+                    image={item.src}
+                    alt={item.alt}
+                  />
+                  <CardContent sx={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 550 }}>{item.name}</Typography>
+                      {item.color && item.size && (
+                        <Typography variant="body2" sx={{ color: '#666' }}>{item.color}, Size {item.size}</Typography>
+                      )}
+                      <Typography variant="body2" sx={{ color: '#334B1C', fontWeight: 550 }}>EGP {item.price}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleAddToCart(item)}
+                        sx={{
+                          border: '1px solid #334B1C',
+                          borderRadius: '50%',
+                          width: 24,
+                          height: 24,
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                        }}
+                      >
+                        <ShoppingCart sx={{ color: '#334B1C', fontSize: 16 }} />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemoveFromWishlist(item.id)}
+                        sx={{
+                          border: '1px solid #666',
+                          borderRadius: '50%',
+                          width: 24,
+                          height: 24,
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                        }}
+                      >
+                        <Close sx={{ color: '#666', fontSize: 16 }} />
+                      </IconButton>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))
+            )}
 
             {/* Total and Checkout Button */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
